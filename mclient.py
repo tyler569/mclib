@@ -1,7 +1,7 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 """
-Minecraft client program for python2.7
+Minecraft client program for python3
 Copyright (c) 2014, Tyler Philbrick
 See COPYING for license information
 """

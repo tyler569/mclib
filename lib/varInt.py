@@ -1,7 +1,7 @@
 
 
 """
-VarInt class for python2.7
+VarInt class for python3
 Copyright (c) 2014, Tyler Philbrick
 See COPYING for license information
 """
