@@ -14,8 +14,8 @@ x = mclib.client()
 a = ("l.vms.pw", 25565)
 b = ("mort.openredstone.org", 25569)
 c = ("rsw.openredstone.org", 25566)
-x.connect(a)
+x.connect(b)
 x.status()
 
-#for i in x.read_lines():
-#	print(i)
+for i in x.read_lines():
+	print(i)

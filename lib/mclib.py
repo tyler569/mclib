@@ -25,14 +25,12 @@ class client(object):
 		"""
 		self.server_info = server_info
 		self.sock.connect(server_info)
-		self._handshake(1)
 		self.read_lines()
 
 	def _assemble_packet(self, *data):
-		print(data)
-		raw = ''.join((str(i) for i in data))
+		raw = b''.join((bytes(i, "latin1") for i in data))
 		plen = varInt(len(raw))
-		send = str(plen) + raw
+		send = bytes(plen) + raw
 		return send
 
 	def _handshake(self, state):
