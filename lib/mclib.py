@@ -7,6 +7,7 @@ See COPYING for license information
 """
 
 import socket
+import sys
 from lib.varInt import varInt
 
 
@@ -28,7 +29,7 @@ class client(object):
 		self.read_lines()
 
 	def _assemble_packet(self, *data):
-		raw = b''.join((bytes(i, "latin1") for i in data))
+		raw = b''.join((bytes(i) for i in data))
 		plen = varInt(len(raw))
 		send = bytes(plen) + raw
 		return send
@@ -41,7 +42,7 @@ class client(object):
 		address = self.server_info[0]
 		addrlen = varInt(len(address))
 		port = self.server_info[1]
-		portS = chr(port % 256) + chr((port >> 8) % 256)
+		portS = port.to_bytes(2, byteorder="big")
 		state = varInt(state)
 
 		data = [pID, version, addrlen, address, portS, state]
@@ -49,7 +50,14 @@ class client(object):
 
 	def status(self):
 		self._handshake(1)
-		data = [varInt(0)]
+		data = [varInt(0)] #Request
+		self.sock.send(self._assemble_packet(*data))
+		data = [varInt(1), b"\xaa\xff\xaa\xff\xaa\xff\xaa\xff"] #Ping
+		self.sock.send(self._assemble_packet(*data))
+
+	def login(self, name):
+		self._handshake(2)
+		data = [varInt(0), varInt(len(name)), name] #Login Start
 		self.sock.send(self._assemble_packet(*data))
 
 	def _pong(self):
@@ -59,7 +67,17 @@ class client(object):
 		"""TODO: have this track packet lengths so it can respond to pings/etc
 		TODO: encryption
 		"""
+		buffer = bytearray()
+		packet_len = 0
+		packet_stt = 0
 		while True:
 			inp = self.sock.recv(1024)
 			if not inp: break
-			yield inp
+			buffer += inp
+			plen = varInt.first(buffer)
+			packet_len = int(plen)
+			packet_stt = len(bytes(plen))
+			if len(buffer) > packet_len:
+				yield bytes(buffer[packet_stt:packet_len + packet_stt])
+				del buffer[:packet_len + packet_stt]
+

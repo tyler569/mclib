@@ -62,3 +62,15 @@ class varInt(object):
 	def __bytes__(self):
 		return self.bytes
 
+	@staticmethod
+	def first(inp):
+		out = bytearray()
+		for i in inp:
+			out.append(i)
+			if i & 0x80 != 0x80:
+				return varInt(bytes(out))
+		return varInt(0)
+
+
+
+

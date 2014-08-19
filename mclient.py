@@ -11,11 +11,11 @@ import lib.mclib as mclib
 import json
 
 x = mclib.client()
-a = ("l.vms.pw", 25565)
-b = ("mort.openredstone.org", 25569)
-c = ("rsw.openredstone.org", 25566)
+a = (b"l.vms.pw", 25565)
+b = (b"mort.openredstone.org", 25569)
+c = (b"rsw.openredstone.org", 25566)
 x.connect(b)
-x.status()
+x.login(b"tyler569")
 
 for i in x.read_lines():
 	print(i)
